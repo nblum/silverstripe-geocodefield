@@ -1,0 +1,23 @@
+{
+  "name": "nblum/silverstripe-geocodefield",
+  "description": "Silverstripe field for fetching geo data from google maps api for any addresses",
+  "license": "MIT",
+  "type": "silverstripe-module",
+  "keywords": [
+    "silverstripe",
+    "input",
+    "geocode",
+    "geolocation"
+  ],
+  "authors": [
+    {
+      "name": "Nico Blum",
+      "email": "github@blum-nico.de",
+      "homepage": "",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "silverstripe/framework": "3.*"
+  }
+}
