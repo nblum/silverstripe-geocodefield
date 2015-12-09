@@ -8,7 +8,7 @@
             <input $lat.AttributesHTML />
         </div>
         <div class="part">
-            <button class="ss-ui-button ss-ui-button-small ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+            <button data-url="$AjaxUrl" data-lat="$lat.name" data-lon="$lon.name" class="ss-ui-button ss-ui-button-small ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                 <span class="ui-button-text">
                     aktualisieren
                 </span>

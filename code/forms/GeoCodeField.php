@@ -5,6 +5,11 @@
  */
 class GeoCodeField extends FormField
 {
+
+    private static $allowed_actions = array(
+        'validateAddress'
+    );
+
     /**
      * @var TextField
      */
@@ -64,6 +69,38 @@ class GeoCodeField extends FormField
         Requirements::javascript('silverstripe-geocodefield/javascript/geocodefield-input.js');
 
         return parent::Field($properties);
+    }
+
+    public function AjaxUrl()
+    {
+        return $this->Link('validateAddress');
+    }
+
+
+    public function validateAddress($request)
+    {
+        $response = new SS_HTTPResponse();
+        $response->addHeader('Content-Type', 'application/json');
+
+        $address = 'Heinigstraße 33, 67059 Ludwigshafen';
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => sprintf('http://maps.google.com/maps/api/geocode/json?address=%s', urlencode($address))
+        ));
+        $resp = curl_exec($curl);
+        curl_close($curl);
+
+        $respObj = json_decode($resp);
+
+        $result = [
+            'lat' => $respObj->results[0]->geometry->location->lat,
+            'lon' => $respObj->results[0]->geometry->location->lng
+        ];
+
+        $response->setBody(Convert::array2json($result));
+        return $response;
     }
 
 }
