@@ -41,7 +41,7 @@ Example with referenced address fields:
     private static $db = array(
         'Street' => 'Varchar(64)',
         'City' => 'Varchar(64)',
-        'Geodata' => 'Varchar(Json)'
+        'Geodata' => 'Json'
     );
 
     public function getCMSFields() {
