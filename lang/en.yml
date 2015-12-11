@@ -1,0 +1,4 @@
+en:
+  GeoCodeField:
+    Refresh: 'refresh'
+    NoResults: '- No data found -'

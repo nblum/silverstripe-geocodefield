@@ -1,0 +1,7 @@
+de:
+  GeoCodeField:
+    Address: 'Adresse eingeben (Straße Nr, Plz Stadt, Land)'
+    Lon: 'Longitude'
+    Lat: 'Latitude'
+    Refresh: 'Aktualisieren'
+    NoResults: '- Keine Daten gefunden -'

@@ -1,28 +1,100 @@
 (function ($) {
     $.entwine('ss', function ($) {
         $.entwine('geocodefield', function ($) {
-            var me = this;
 
-            $('.geocodefield-input button').entwine({
+            $('.geocodefield-input').entwine({
+                /**
+                 * initalizes geocode field
+                 */
                 onmatch: function () {
+                    var me = this,
+                        response = {},
+                        references = $(me).data('references'),
+                        referencedFields = references.split(','),
+                        $valueField = $('input[name="' + me.data('valuefield') + '"]');
+
+
+                    $.each(referencedFields, function (index, name) {
+                        if (name.length > 0) {
+                            $('input[name="' + name + '"]').on('change', function (e) {
+                                me.updateaddressfield();
+                            });
+                        }
+                    });
+
+                    //load saved values
+                    response = jQuery.parseJSON($valueField.val())
+                    if (!!response && response.lon) {
+                        me.showresponsedata(response);
+                    }
+
+                    $('#' + me.data('button')).on('click', function () {
+                        me.buttonclick();
+                    });
                 },
-                onclick: function () {
-                    var me = this;
+                /**
+                 * loads data via xhr
+                 */
+                buttonclick: function () {
+                    var me = this,
+                        references = $(me).data('references'),
+                        $button = $('#' + me.data('button')),
+                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
+                        addressValidatorUrl = me.data('url');
 
-                    $('.geocodefield-input input').attr('disabled', 'true');
+                    $button.attr('disabled', 'true');
 
-                    $.ajax(this.data('url'))
+                    $.ajax({
+                            url: addressValidatorUrl,
+                            data: {
+                                address: $addressField.val()
+                            }
+                        })
                         .done(function (response) {
-                            $('#' + me.data('lat')).val(response.lat);
-                            $('#' + me.data('lon')).val(response.lon);
+                            me.showresponsedata(response);
                         })
                         .fail(function () {
                             alert("Failed to update geodata");
                         })
                         .always(function () {
-                            $('.geocodefield-input input').removeAttr('disabled');
+                            $button.removeAttr('disabled', 'true');
                         });
+                },
+                /**
+                 * adds the given respons into the fields
+                 * @param response
+                 */
+                showresponsedata: function (response) {
+                    var me = this,
+                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
+                        $valueField = $('input[name="' + me.data('valuefield') + '"]'),
+                        $lonField = $('input[name="' + me.data('lonfield') + '"]'),
+                        $latField = $('input[name="' + me.data('latfield') + '"]');
+
+                    $latField.val(response.lat);
+                    $lonField.val(response.lon);
+                    $addressField.val(response.formatted_address);
+                    $valueField.val(JSON.stringify(response));
+                },
+                /**
+                 * updates the address-field from the references (if set)
+                 */
+                updateaddressfield: function () {
+                    var me = this,
+                        references = $(me).data('references'),
+                        referencedFields = references.split(','),
+                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
+                        addressString = '';
+
+                    $.each(referencedFields, function (index, name) {
+                        if (name.length > 0) {
+                            addressString += ' ' + $('input[name="' + name + '"]').val();
+                        }
+                    });
+
+                    $addressField.val(addressString);
                 }
+
             });
         });
     }); // ss namespace

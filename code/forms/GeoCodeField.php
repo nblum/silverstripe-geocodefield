@@ -3,12 +3,27 @@
 /**
  * Class GeoCodeField
  */
-class GeoCodeField extends FormField
+class GeoCodeField extends TextField
 {
 
     private static $allowed_actions = array(
         'validateAddress'
     );
+
+    /**
+     * @var string
+     */
+    protected $identifier = '';
+
+    /**
+     * @var bool
+     */
+    protected $editableAddress = true;
+
+    /**
+     * @var TextField
+     */
+    protected $address = null;
 
     /**
      * @var TextField
@@ -20,11 +35,54 @@ class GeoCodeField extends FormField
      */
     protected $lat = null;
 
+    /**
+     * @var string[]
+     */
+    protected $referencedFields = [];
 
-    public function __construct($title = null)
+    /**
+     * GeoCodeField constructor.
+     * @param string $name
+     * @param null $title
+     */
+    public function __construct($name, $title = null)
     {
-        parent::__construct('GeoCodeField', $title);
+        parent::__construct($name, $title);
+        $this->identifier = uniqid();
+
         $this->setTemplate('GeoCodeField');
+        $this->setLon('Lon' . $this->Identifier());
+        $this->setLat('Lat' . $this->Identifier());
+        $this->setAddress('Address' . $this->Identifier());
+        $this->setAttribute('type', 'hidden');
+        $this->setAttribute('data-valuefield', 'true');
+    }
+
+    /**
+     * address input field will be not editable
+     */
+    public function setAddressNotEditable()
+    {
+        $this->address->setAttribute('disabled', 'disabled');
+    }
+
+    /**
+     * @return TextField
+     */
+    public function getAddress()
+    {
+        return $this->lon;
+    }
+
+    /**
+     * @param TextField $name
+     * @return GeoCodeField
+     */
+    public function setAddress($name)
+    {
+        $this->address = new TextField($name);
+        $this->address->setAttribute('placeholder', _t('GeoCodeField.Address', ''));
+        return $this;
     }
 
     /**
@@ -42,6 +100,8 @@ class GeoCodeField extends FormField
     public function setLon($lon)
     {
         $this->lon = new TextField($lon);
+        $this->lon->setAttribute('disabled', 'disabled');
+        $this->lon->setAttribute('placeholder', _t('GeoCodeField.Lon', ''));
         return $this;
     }
 
@@ -60,9 +120,31 @@ class GeoCodeField extends FormField
     public function setLat($lat)
     {
         $this->lat = new TextField($lat);
+        $this->lat->setAttribute('disabled', 'disabled');
+        $this->lat->setAttribute('placeholder', _t('GeoCodeField.Lat', ''));
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getReferencedFields()
+    {
+        return new ArrayList($this->referencedFields);
+    }
+
+    /**
+     * @param string $fieldName
+     */
+    public function addAddressReference($fieldName)
+    {
+        $this->referencedFields[] = ArrayData::create(['value' => $fieldName]);
+    }
+
+    /**
+     * @param array $properties
+     * @return string
+     */
     public function Field($properties = array())
     {
         Requirements::css('silverstripe-geocodefield/css/geocodefield-input.css');
@@ -71,18 +153,35 @@ class GeoCodeField extends FormField
         return parent::Field($properties);
     }
 
+    /**
+     * returns the xhr request url for address validation
+     * @return string
+     */
     public function AjaxUrl()
     {
         return $this->Link('validateAddress');
     }
 
+    /**
+     * returns a unique identifier
+     * @return string
+     */
+    public function Identifier()
+    {
+        return $this->identifier;
+    }
 
-    public function validateAddress($request)
+    /**
+     * validates the given address against the google maps address api
+     * @param SS_HTTPRequest $request
+     * @return SS_HTTPResponse
+     */
+    public function validateAddress(SS_HTTPRequest $request)
     {
         $response = new SS_HTTPResponse();
         $response->addHeader('Content-Type', 'application/json');
 
-        $address = 'Heinigstraße 33, 67059 Ludwigshafen';
+        $address = filter_var($request->requestVar('address'), FILTER_SANITIZE_STRING);
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -94,10 +193,19 @@ class GeoCodeField extends FormField
 
         $respObj = json_decode($resp);
 
-        $result = [
-            'lat' => $respObj->results[0]->geometry->location->lat,
-            'lon' => $respObj->results[0]->geometry->location->lng
-        ];
+        if(count($respObj->results) > 0) {
+            $result = [
+                'formatted_address' => $respObj->results[0]->formatted_address,
+                'lat' => $respObj->results[0]->geometry->location->lat,
+                'lon' => $respObj->results[0]->geometry->location->lng
+            ];
+        } else {
+            $result = [
+                'formatted_address' => _t('GeoCodeField.NoResults', '- No Data Found - '),
+                'lat' => 0,
+                'lon' => 0
+            ];
+        }
 
         $response->setBody(Convert::array2json($result));
         return $response;

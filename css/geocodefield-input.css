@@ -6,12 +6,38 @@
 
 .geocodefield-input .position-wrapper .part {
     display: inline-block;
-    width: 33%;
+    vertical-align: top;
+    width: 33.3%;
     font-size: 1rem;
+    padding: 1px 1px 0 0;
+    box-sizing: border-box;
+}
+
+.geocodefield-input .position-wrapper .part:last-child {
+    padding-right: 0;
 }
 
 .geocodefield-input .position-wrapper .part button {
     width: 100%;
-    height: 30px;
-    margin: 0 2px;
+    height: 32px;
+    margin: 0;
+    display: block;
 }
+
+.geocodefield-input .position-wrapper .part button[disabled=disabled] {
+    color: silver;
+    background: #efefef;
+}
+
+.geocodefield-input .position-wrapper .part button[disabled=disabled]:hover,
+.geocodefield-input .position-wrapper .part button[disabled=disabled]:focus {
+    outline: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.geocodefield-input input[disabled=disabled] {
+    background: #efefef;
+}
+
