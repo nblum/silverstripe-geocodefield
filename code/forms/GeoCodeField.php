@@ -38,7 +38,7 @@ class GeoCodeField extends TextField
     /**
      * @var string[]
      */
-    protected $referencedFields = [];
+    protected $referencedFields = array();
 
     /**
      * GeoCodeField constructor.
@@ -56,6 +56,15 @@ class GeoCodeField extends TextField
         $this->setAddress('Address' . $this->Identifier());
         $this->setAttribute('type', 'hidden');
         $this->setAttribute('data-valuefield', 'true');
+    }
+
+    /**
+     * returns a unique identifier
+     * @return string
+     */
+    public function Identifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -138,7 +147,7 @@ class GeoCodeField extends TextField
      */
     public function addAddressReference($fieldName)
     {
-        $this->referencedFields[] = ArrayData::create(['value' => $fieldName]);
+        $this->referencedFields[] = ArrayData::create(array('value' => $fieldName));
     }
 
     /**
@@ -163,15 +172,6 @@ class GeoCodeField extends TextField
     }
 
     /**
-     * returns a unique identifier
-     * @return string
-     */
-    public function Identifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
      * validates the given address against the google maps address api
      * @param SS_HTTPRequest $request
      * @return SS_HTTPResponse
@@ -193,18 +193,18 @@ class GeoCodeField extends TextField
 
         $respObj = json_decode($resp);
 
-        if(count($respObj->results) > 0) {
-            $result = [
+        if (count($respObj->results) > 0) {
+            $result = array(
                 'formatted_address' => $respObj->results[0]->formatted_address,
                 'lat' => $respObj->results[0]->geometry->location->lat,
                 'lon' => $respObj->results[0]->geometry->location->lng
-            ];
+            );
         } else {
-            $result = [
+            $result = array(
                 'formatted_address' => _t('GeoCodeField.NoResults', '- No Data Found - '),
                 'lat' => 0,
                 'lon' => 0
-            ];
+            );
         }
 
         $response->setBody(Convert::array2json($result));

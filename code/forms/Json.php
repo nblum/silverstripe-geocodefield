@@ -4,11 +4,10 @@
 class Json extends Text
 {
 
-    public function Values()
+    public function Data()
     {
         $obj = json_decode($this->value);
-        var_dump($obj);
-        if(!is_array($obj) && !is_object($obj)) {
+        if (!is_array($obj) && !is_object($obj)) {
             return '';
         }
         return new ArrayData($obj);
