@@ -31,6 +31,8 @@
                     $('#' + me.data('button')).on('click', function () {
                         me.buttonclick();
                     });
+
+                    me.updateaddressfield();
                 },
                 /**
                  * loads data via xhr
@@ -39,10 +41,12 @@
                     var me = this,
                         references = $(me).data('references'),
                         $button = $('#' + me.data('button')),
+                        $geoAddress = $('#' + me.data('geoaddress')),
                         $addressField = $('input[name="' + me.data('addressfield') + '"]'),
                         addressValidatorUrl = me.data('url');
 
                     $button.attr('disabled', 'true');
+                    $geoAddress.html($geoAddress.data('searching'));
 
                     $.ajax({
                             url: addressValidatorUrl,
@@ -66,15 +70,16 @@
                  */
                 showresponsedata: function (response) {
                     var me = this,
-                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
+                        $geoAddress = $('#' + me.data('geoaddress')),
                         $valueField = $('input[name="' + me.data('valuefield') + '"]'),
                         $lonField = $('input[name="' + me.data('lonfield') + '"]'),
                         $latField = $('input[name="' + me.data('latfield') + '"]');
 
                     $latField.val(response.lat);
                     $lonField.val(response.lon);
-                    $addressField.val(response.formatted_address);
+                    $geoAddress.html(response.formatted_address);
                     $valueField.val(JSON.stringify(response));
+                    me.updateState();
                 },
                 /**
                  * updates the address-field from the references (if set)
@@ -93,6 +98,25 @@
                     });
 
                     $addressField.val(addressString);
+                    me.updateState();
+                },
+                /**
+                 * updates current address matching state
+                 */
+                updateState: function () {
+                    var me = this,
+                        references = $(me).data('references'),
+                        referencedFields = references.split(','),
+                        $valueField = $('input[name="' + me.data('valuefield') + '"]'),
+                        values = $.parseJSON($valueField.val()),
+                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
+                        addressString = '';
+
+                    if(values.search_address !== $addressField.val()) {
+                        $(me).addClass('changed');
+                    } else {
+                        $(me).removeClass('changed');
+                    }
                 }
 
             });

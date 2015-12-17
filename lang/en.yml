@@ -1,4 +1,9 @@
 en:
   GeoCodeField:
+    Address: 'Enter address (street, postcode city, country)'
+    Lon: 'Longitude'
+    Lat: 'Latitude'
     Refresh: 'refresh'
     NoResults: '- No data found -'
+    Searching: 'searching...'
+    ApiAddress: 'API address:'

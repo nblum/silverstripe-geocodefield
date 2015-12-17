@@ -195,12 +195,14 @@ class GeoCodeField extends TextField
 
         if (count($respObj->results) > 0) {
             $result = array(
+                'search_address' => $address,
                 'formatted_address' => $respObj->results[0]->formatted_address,
                 'lat' => $respObj->results[0]->geometry->location->lat,
                 'lon' => $respObj->results[0]->geometry->location->lng
             );
         } else {
             $result = array(
+                'search_address' => $address,
                 'formatted_address' => _t('GeoCodeField.NoResults', '- No Data Found - '),
                 'lat' => 0,
                 'lon' => 0

@@ -1,3 +1,7 @@
+.geocodefield-input.changed input[disabled=disabled] {
+    border-color: orange;
+}
+
 .geocodefield-input .position-wrapper {
     font-size: 0;
     overflow: hidden;

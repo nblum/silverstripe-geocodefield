@@ -5,3 +5,5 @@ de:
     Lat: 'Latitude'
     Refresh: 'Aktualisieren'
     NoResults: '- Keine Daten gefunden -'
+    Searching: 'Suchen...'
+    ApiAddress: 'API Adresse:'

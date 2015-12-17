@@ -1,5 +1,5 @@
 <div class="geocodefield-input" data-url="$AjaxUrl" data-button="geocode-button-$Identifier" data-valuefield="$name"
-     data-addressfield="$address.name" data-latfield="$lat.name" data-lonfield="$lon.name"
+     data-addressfield="$address.name" data-latfield="$lat.name" data-lonfield="$lon.name" data-geoaddress="geo-address-$Identifier"
      data-references="<% loop $ReferencedFields %>$Me.value,<% end_loop %>">
     <input $AttributesHTML />
     <input $address.AttributesHTML />
@@ -16,9 +16,13 @@
                     class="ss-ui-button ss-ui-button-small ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
                     role="button" aria-disabled="false">
                 <span class="ui-button-text">
-                    <%t GeoCodeField.Refresh "refresh" %>
+                    <%t GeoCodeField.Refresh 'refresh' %>
                 </span>
             </button>
         </div>
+    </div>
+    <div class="geo-address">
+        <span><%t GeoCodeField.ApiAddress 'API Address:' %></span>
+        <span id="geo-address-$Identifier" data-searching="<%t GeoCodeField.Searching 'searching...' %>"></span>
     </div>
 </div>
