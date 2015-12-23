@@ -1,5 +1,5 @@
-.geocodefield-input.changed input[disabled=disabled] {
-    border-color: orange;
+.geocodefield-input.changed button {
+    background: orange;
 }
 
 .geocodefield-input .position-wrapper {

@@ -21,6 +21,11 @@ class GeoCodeField extends TextField
     protected $editableAddress = true;
 
     /**
+     * @var bool
+     */
+    protected $apiAddressVisible = true;
+
+    /**
      * @var TextField
      */
     protected $address = null;
@@ -56,6 +61,7 @@ class GeoCodeField extends TextField
         $this->setAddress('Address' . $this->Identifier());
         $this->setAttribute('type', 'hidden');
         $this->setAttribute('data-valuefield', 'true');
+        $this->setAttribute('data-field', 'jsondata');
     }
 
     /**
@@ -76,6 +82,14 @@ class GeoCodeField extends TextField
     }
 
     /**
+     * address input field will be not editable
+     */
+    public function setApiAddressInvisible()
+    {
+        $this->apiAddressVisible = false;
+    }
+
+    /**
      * @return TextField
      */
     public function getAddress()
@@ -90,6 +104,7 @@ class GeoCodeField extends TextField
     public function setAddress($name)
     {
         $this->address = new TextField($name);
+        $this->address->setAttribute('data-field', 'addressinput');
         $this->address->setAttribute('placeholder', _t('GeoCodeField.Address', ''));
         return $this;
     }
@@ -110,6 +125,7 @@ class GeoCodeField extends TextField
     {
         $this->lon = new TextField($lon);
         $this->lon->setAttribute('disabled', 'disabled');
+        $this->lon->setAttribute('data-field', 'lon');
         $this->lon->setAttribute('placeholder', _t('GeoCodeField.Lon', ''));
         return $this;
     }
@@ -130,6 +146,7 @@ class GeoCodeField extends TextField
     {
         $this->lat = new TextField($lat);
         $this->lat->setAttribute('disabled', 'disabled');
+        $this->lat->setAttribute('data-field', 'lat');
         $this->lat->setAttribute('placeholder', _t('GeoCodeField.Lat', ''));
         return $this;
     }

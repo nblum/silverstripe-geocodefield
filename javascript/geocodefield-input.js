@@ -8,19 +8,8 @@
                  */
                 onmatch: function () {
                     var me = this,
-                        response = {},
                         references = $(me).data('references'),
-                        referencedFields = references.split(','),
-                        $valueField = $('input[name="' + me.data('valuefield') + '"]');
-
-
-                    $.each(referencedFields, function (index, name) {
-                        if (name.length > 0) {
-                            $('input[name="' + name + '"]').on('change', function (e) {
-                                me.updateaddressfield();
-                            });
-                        }
-                    });
+                        $valueField = $(me).find('[data-field="jsondata"]');
 
                     //load saved values
                     response = jQuery.parseJSON($valueField.val())
@@ -28,11 +17,32 @@
                         me.showresponsedata(response);
                     }
 
-                    $('#' + me.data('button')).on('click', function () {
+                    $(me).find('button').on('click', function () {
                         me.buttonclick();
                     });
 
-                    me.updateaddressfield();
+                    me.updateaddressfield(function () {
+                        me.initChangeWatch();
+                    });
+                },
+                /**
+                 * initalizes the change watcher on the referenced fields
+                 */
+                initChangeWatch: function () {
+                    var me = this,
+                        references = $(me).data('references'),
+                        referencedFields = references.split(',');
+
+                    $.each(referencedFields, function (index, name) {
+                        if (name.length > 0) {
+                            $('input[name="' + name + '"]').on('change', function (e) {
+                                me.updateaddressfield(function () {
+                                    me.updateState();
+                                });
+                            });
+                        }
+                    });
+                    me.updateState();
                 },
                 /**
                  * loads data via xhr
@@ -40,9 +50,9 @@
                 buttonclick: function () {
                     var me = this,
                         references = $(me).data('references'),
-                        $button = $('#' + me.data('button')),
-                        $geoAddress = $('#' + me.data('geoaddress')),
-                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
+                        $button = $(me).find('button'),
+                        $geoAddress = $(me).find('[data-field="apiaddress"]'),
+                        $addressField = $(me).find('[data-field="addressinput"]'),
                         addressValidatorUrl = me.data('url');
 
                     $button.attr('disabled', 'true');
@@ -56,6 +66,7 @@
                         })
                         .done(function (response) {
                             me.showresponsedata(response);
+                            me.updateState();
                         })
                         .fail(function () {
                             alert("Failed to update geodata");
@@ -70,25 +81,24 @@
                  */
                 showresponsedata: function (response) {
                     var me = this,
-                        $geoAddress = $('#' + me.data('geoaddress')),
-                        $valueField = $('input[name="' + me.data('valuefield') + '"]'),
-                        $lonField = $('input[name="' + me.data('lonfield') + '"]'),
-                        $latField = $('input[name="' + me.data('latfield') + '"]');
+                        $geoAddress = $(me).find('[data-field="apiaddress"]'),
+                        $valueField = $(me).find('[data-field="jsondata"]'),
+                        $lonField = $(me).find('[data-field="lon"]'),
+                        $latField = $(me).find('[data-field="lat"]');
 
                     $latField.val(response.lat);
                     $lonField.val(response.lon);
                     $geoAddress.html(response.formatted_address);
                     $valueField.val(JSON.stringify(response));
-                    me.updateState();
                 },
                 /**
                  * updates the address-field from the references (if set)
                  */
-                updateaddressfield: function () {
+                updateaddressfield: function (cbFn) {
                     var me = this,
                         references = $(me).data('references'),
                         referencedFields = references.split(','),
-                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
+                        $addressField = $(me).find('[data-field="addressinput"]'),
                         addressString = '';
 
                     $.each(referencedFields, function (index, name) {
@@ -98,24 +108,38 @@
                     });
 
                     $addressField.val(addressString);
-                    me.updateState();
+
+                    if (typeof(cbFn) === 'function') {
+                        cbFn();
+                    }
                 },
                 /**
                  * updates current address matching state
                  */
-                updateState: function () {
+                updateState: function (cbFn) {
                     var me = this,
                         references = $(me).data('references'),
-                        referencedFields = references.split(','),
-                        $valueField = $('input[name="' + me.data('valuefield') + '"]'),
-                        values = $.parseJSON($valueField.val()),
-                        $addressField = $('input[name="' + me.data('addressfield') + '"]'),
-                        addressString = '';
+                        $lonField = $(me).find('[data-field="lon"]'),
+                        $latField = $(me).find('[data-field="lat"]'),
+                        $valueField = $(me).find('[data-field="jsondata"]'),
+                        $addressField = $(me).find('[data-field="addressinput"]'),
+                        values = $.parseJSON($valueField.val());
 
-                    if(values.search_address !== $addressField.val()) {
+                    if (!references) {
+                        return;
+                    }
+
+                    if (values == '' || values.search_address !== $addressField.val()) {
                         $(me).addClass('changed');
+                        $lonField.val('');
+                        $latField.val('');
+                        $valueField.val('');
                     } else {
                         $(me).removeClass('changed');
+                    }
+
+                    if (typeof(cbFn) === 'function') {
+                        cbFn();
                     }
                 }
 

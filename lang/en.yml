@@ -6,4 +6,4 @@ en:
     Refresh: 'refresh'
     NoResults: '- No data found -'
     Searching: 'searching...'
-    ApiAddress: 'API address:'
+    ApiAddress: 'Corrected address:'
