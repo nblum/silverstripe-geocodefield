@@ -1,7 +1,11 @@
 <?php
 
+namespace Nblum\Geocodefield\Forms;
 
-class Json extends Text
+use SilverStripe\ORM\FieldType\DBText;
+use SilverStripe\View\ArrayData;
+
+class Json extends DBText
 {
 
     public function Data()

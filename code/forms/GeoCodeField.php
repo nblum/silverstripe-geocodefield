@@ -1,5 +1,15 @@
 <?php
 
+namespace Nblum\Geocodefield\Forms;
+
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Convert;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
+use SilverStripe\View\Requirements;
+
 /**
  * Class GeoCodeField
  */
@@ -189,13 +199,12 @@ class GeoCodeField extends TextField
     }
 
     /**
-     * validates the given address against the google maps address api
-     * @param SS_HTTPRequest $request
-     * @return SS_HTTPResponse
+     * @param HTTPRequest $request
+     * @return HTTPResponse
      */
-    public function validateAddress(SS_HTTPRequest $request)
+    public function validateAddress(HTTPRequest $request)
     {
-        $response = new SS_HTTPResponse();
+        $response = new HTTPResponse();
         $response->addHeader('Content-Type', 'application/json');
 
         $address = filter_var($request->requestVar('address'), FILTER_SANITIZE_STRING);

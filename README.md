@@ -4,14 +4,14 @@ Fetches the geo position (lon,lat) from google maps api.
 Can be used as free address input field or referenced to other address fields in form
 
 ## Requirements
-* Silverstripe 3.*
+* Silverstripe 4.*
 
 ## Installation
 ### Composer
 * `composer require "nblum/silverstripe-geocodefield"`
 
 ### Manual
-* Download and copy module in SilverStripe root directory
+* Download/Clone module in SilverStripe root directory
 
 ## Usage
 
@@ -22,14 +22,14 @@ Basic Example:
     class MyPage extends Page {
     
         private static $db = array(
-            'Geodata' => 'Json'
+            'Geodata' => \Nblum\Geocodefield\Forms\Json::class
         );
     
         public function getCMSFields() {
             $fields = parent::getCMSFields();
     
             //creates a GeoCodeField field
-            $fields->addFieldToTab('Root.Main', new GeoCodeField('Geodata'));
+            $fields->addFieldToTab('Root.Main', new \Nblum\Geocodefield\Forms\GeoCodeField('Geodata'));
     
             return $fields;
         }
@@ -44,8 +44,8 @@ Example with referenced address fields:
     class MyPage extends Page {
     
         private static $db = array(
-            'Street' => 'Varchar(64)',
-            'City' => 'Varchar(64)',
+            'Street' => 'Varchar',
+            'City' => 'Varchar',
             'Geodata' => 'Json'
         );
     
@@ -56,7 +56,7 @@ Example with referenced address fields:
             $fields->addFieldToTab('Root.Main', new TextField('City'));
     
             //creates a GeoCodeField field
-            $field = new GeoCodeField('Geodata', 'Geo Position');
+            $field = new \Nblum\Geocodefield\Forms\GeoCodeField('Geodata', 'Geo Position');
             $field->addAddressReference('Street');
             $field->addAddressReference('City');
             $field->setAddressNotEditable();
