@@ -44,8 +44,8 @@ Example with referenced address fields:
     class MyPage extends Page {
     
         private static $db = array(
-            'Street' => 'Varchar(64)',
-            'City' => 'Varchar(64)',
+            'Street' => 'Varchar',
+            'City' => 'Varchar',
             'Geodata' => 'Json'
         );
     
@@ -56,7 +56,7 @@ Example with referenced address fields:
             $fields->addFieldToTab('Root.Main', new TextField('City'));
     
             //creates a GeoCodeField field
-            $field = new GeoCodeField('Geodata', 'Geo Position');
+            $field = new \Nblum\Geocodefield\Forms\GeoCodeField('Geodata', 'Geo Position');
             $field->addAddressReference('Street');
             $field->addAddressReference('City');
             $field->setAddressNotEditable();
