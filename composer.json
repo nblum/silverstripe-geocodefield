@@ -18,11 +18,18 @@
   "require": {
     "silverstripe/framework": "4.*"
   },
-    "autoload": {
-        "psr-4": {
-            "Nblum\\Geocodefield\\": "code/"
-        }
-    },
-    "prefer-stable": true,
-    "minimum-stability": "dev"
+  "extra": {
+    "installer-name": "geocodefield",
+    "expose": [
+      "css",
+      "javascript"
+    ]
+  },
+  "autoload": {
+      "psr-4": {
+          "Nblum\\Geocodefield\\": "code/"
+      }
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev"
 }
