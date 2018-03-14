@@ -183,8 +183,8 @@ class GeoCodeField extends TextField
      */
     public function Field($properties = array())
     {
-        Requirements::css('silverstripe-geocodefield/css/geocodefield-input.css');
-        Requirements::javascript('silverstripe-geocodefield/javascript/geocodefield-input.js');
+        Requirements::css('nblum/silverstripe-geocodefield:css/geocodefield-input.css');
+        Requirements::javascript('nblum/silverstripe-geocodefield:javascript/geocodefield-input.js');
 
         return parent::Field($properties);
     }
