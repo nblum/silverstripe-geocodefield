@@ -4,14 +4,14 @@ Fetches the geo position (lon,lat) from google maps api.
 Can be used as free address input field or referenced to other address fields in form
 
 ## Requirements
-* Silverstripe 3.*
+* Silverstripe 4.*
 
 ## Installation
 ### Composer
 * `composer require "nblum/silverstripe-geocodefield"`
 
 ### Manual
-* Download and copy module in SilverStripe root directory
+* Download/Clone module in SilverStripe root directory
 
 ## Usage
 
@@ -22,14 +22,14 @@ Basic Example:
     class MyPage extends Page {
     
         private static $db = array(
-            'Geodata' => 'Json'
+            'Geodata' => \Nblum\Geocodefield\Forms\Json::class
         );
     
         public function getCMSFields() {
             $fields = parent::getCMSFields();
     
             //creates a GeoCodeField field
-            $fields->addFieldToTab('Root.Main', new GeoCodeField('Geodata'));
+            $fields->addFieldToTab('Root.Main', new \Nblum\Geocodefield\Forms\GeoCodeField('Geodata'));
     
             return $fields;
         }
