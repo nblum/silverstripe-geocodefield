@@ -4,7 +4,7 @@ Fetches the geo position (lon,lat) from google maps api.
 Can be used as free address input field or referenced to other address fields in form
 
 ## Requirements
-* Silverstripe 4.*
+* Silverstripe 4.* or Silverstripe 3.*(use tag 0.3.0 for v3.x support)
 
 ## Installation
 ### Composer
