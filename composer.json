@@ -2,7 +2,7 @@
   "name": "nblum/silverstripe-geocodefield",
   "description": "Silverstripe field for fetching geo data from google maps api for any addresses",
   "license": "MIT",
-  "type": "silverstripe-module",
+  "type": "silverstripe-vendormodule",
   "keywords": [
     "silverstripe",
     "input",
@@ -17,5 +17,12 @@
   ],
   "require": {
     "silverstripe/framework": "4.*"
-  }
+  },
+    "autoload": {
+        "psr-4": {
+            "Nblum\\Geocodefield\\": "code/"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }
