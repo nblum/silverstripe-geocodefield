@@ -115,7 +115,7 @@ class GeoCodeField extends TextField
     {
         $this->address = new TextField($name);
         $this->address->setAttribute('data-field', 'addressinput');
-        $this->address->setAttribute('placeholder', _t('GeoCodeField.Address', ''));
+        $this->address->setAttribute('placeholder', _t('GeoCodeField.Address', 'Enter address (street, postcode city, country'));
         return $this;
     }
 
@@ -136,7 +136,7 @@ class GeoCodeField extends TextField
         $this->lon = new TextField($lon);
         $this->lon->setAttribute('disabled', 'disabled');
         $this->lon->setAttribute('data-field', 'lon');
-        $this->lon->setAttribute('placeholder', _t('GeoCodeField.Lon', ''));
+        $this->lon->setAttribute('placeholder', _t('GeoCodeField.Lon', 'Longitude'));
         return $this;
     }
 
@@ -157,7 +157,7 @@ class GeoCodeField extends TextField
         $this->lat = new TextField($lat);
         $this->lat->setAttribute('disabled', 'disabled');
         $this->lat->setAttribute('data-field', 'lat');
-        $this->lat->setAttribute('placeholder', _t('GeoCodeField.Lat', ''));
+        $this->lat->setAttribute('placeholder', _t('GeoCodeField.Lat', 'Latitude'));
         return $this;
     }
 
