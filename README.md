@@ -17,7 +17,7 @@ Can be used as free address input field or referenced to other address fields in
 
 Configuration:
 
-You may need to provide an api key from google
+You may need to provide an api key from google (Geolocation API)
 
 ```yml
 Nblum\Geocodefield\Forms\GeoCodeField:

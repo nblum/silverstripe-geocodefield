@@ -244,6 +244,15 @@ class GeoCodeField extends TextField
         curl_close($curl);
 
         $respObj = json_decode($resp);
+//        var_dump($respObj);die();
+        if($respObj->error_message) {
+            return [
+                'search_address' => $address,
+                'formatted_address' => 'API ERROR: ' . $respObj->error_message,
+                'lat' => 0,
+                'lon' => 0
+            ];
+        }
 
         if (count($respObj->results) > 0) {
             $result = array(
