@@ -2,8 +2,10 @@
 
 namespace Nblum\Geocodefield\Forms;
 
+use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
@@ -115,7 +117,7 @@ class GeoCodeField extends TextField
     {
         $this->address = new TextField($name);
         $this->address->setAttribute('data-field', 'addressinput');
-        $this->address->setAttribute('placeholder', _t('GeoCodeField.Address', ''));
+        $this->address->setAttribute('placeholder', _t('GeoCodeField.Address', 'Enter address (street, postcode city, country'));
         return $this;
     }
 
@@ -136,7 +138,7 @@ class GeoCodeField extends TextField
         $this->lon = new TextField($lon);
         $this->lon->setAttribute('disabled', 'disabled');
         $this->lon->setAttribute('data-field', 'lon');
-        $this->lon->setAttribute('placeholder', _t('GeoCodeField.Lon', ''));
+        $this->lon->setAttribute('placeholder', _t('GeoCodeField.Lon', 'Longitude'));
         return $this;
     }
 
@@ -157,7 +159,7 @@ class GeoCodeField extends TextField
         $this->lat = new TextField($lat);
         $this->lat->setAttribute('disabled', 'disabled');
         $this->lat->setAttribute('data-field', 'lat');
-        $this->lat->setAttribute('placeholder', _t('GeoCodeField.Lat', ''));
+        $this->lat->setAttribute('placeholder', _t('GeoCodeField.Lat', 'Latitude'));
         return $this;
     }
 
@@ -209,10 +211,34 @@ class GeoCodeField extends TextField
 
         $address = filter_var($request->requestVar('address'), FILTER_SANITIZE_STRING);
 
+        // use nominatim.openstreetmap.org
+        if ($this->config()->get('custom_geocoder') == 'osm') {
+            $result = $this->validateAddressWithOsm($address);
+            $response->setBody(Convert::array2json($result));
+            return $response;
+        }
+
+        // default: use google geocoder
+        $result = $this->validateAddressWithGoogle($address);
+
+        $response->setBody(Convert::array2json($result));
+        return $response;
+    }
+
+    /**
+     * Get Geodata from nominatim.openstreetmap.org
+     * Note: we provide a referer to not get blocked (so quickly)
+     * @param $address
+     * @return array
+     */
+    public function validateAddressWithGoogle($address) {
+
+        $google_api_key = $this->config()->get('google_api_key');
+
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => sprintf('http://maps.google.com/maps/api/geocode/json?address=%s', urlencode($address))
+            CURLOPT_URL => sprintf('https://maps.google.com/maps/api/geocode/json?address=%s&key=%s', urlencode($address), $google_api_key)
         ));
         $resp = curl_exec($curl);
         curl_close($curl);
@@ -235,8 +261,45 @@ class GeoCodeField extends TextField
             );
         }
 
-        $response->setBody(Convert::array2json($result));
-        return $response;
+        return $result;
+    }
+
+    /**
+     * Get Geodata from nominatim.openstreetmap.org
+     * Note: we provide a referer to not get blocked (so quickly)
+     * @param $address
+     * @return array
+     */
+    public function validateAddressWithOsm($address) {
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => sprintf('https://nominatim.openstreetmap.org/search?format=json&q=%s', urlencode($address)),
+            CURLOPT_REFERER => Director::protocolAndHost()
+        ));
+        $resp = curl_exec($curl);
+        curl_close($curl);
+
+        $respObj = json_decode($resp);
+
+        if (count($respObj) > 0) {
+            $result = array(
+                'search_address' => $address,
+                'formatted_address' => $respObj[0]->display_name,
+                'lat' => $respObj[0]->lat,
+                'lon' => $respObj[0]->lon
+            );
+        } else {
+            $result = array(
+                'search_address' => $address,
+                'formatted_address' => _t('GeoCodeField.NoResults', '- No Data Found - '),
+                'lat' => 0,
+                'lon' => 0
+            );
+        }
+
+        return $result;
     }
 
 }

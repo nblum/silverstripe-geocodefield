@@ -15,6 +15,23 @@ Can be used as free address input field or referenced to other address fields in
 
 ## Usage
 
+Configuration:
+
+You may need to provide an api key from google
+
+```yml
+Nblum\Geocodefield\Forms\GeoCodeField:
+  google_api_key: 'your_google_maps_api_ke'
+```
+
+...or try to geocode with Nominatim from OpenStreetMap https://wiki.openstreetmap.org/wiki/Nominatim
+
+```yml
+Nblum\Geocodefield\Forms\GeoCodeField:
+  custom_geocoder: 'osm'
+```
+
+
 Basic Example:
 
 ```php
