@@ -244,8 +244,8 @@ class GeoCodeField extends TextField
         curl_close($curl);
 
         $respObj = json_decode($resp);
-//        var_dump($respObj);die();
-        if($respObj->error_message) {
+        //        var_dump($respObj);die();
+        if (property_exists($respObj, 'error_message')) {
             return [
                 'search_address' => $address,
                 'formatted_address' => 'API ERROR: ' . $respObj->error_message,
